@@ -1,0 +1,4 @@
+mcu=attiny45
+programmer=arduinoisp
+
+sudo avrdude -c ${programmer} -p ${mcu} -U lfuse:w:0xe2:m -U hfuse:w:0xdc:m -U efuse:w:0x01:m
