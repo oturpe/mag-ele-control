@@ -33,9 +33,16 @@ inline void setIndicator(bool lit) {
   }
   // TEMP: Just testing out the magnet drivers
   counter += 16;
+  /*if(counter==1) {
+    OCR0A = 0;
+    OCR0B = 0;
+    _delay_ms(BASEWAIT_MS);
+  }*/
+
   OCR0A = counter;
-  OCR0B = 0xff -counter;
+  OCR0B = 0xff - counter;
   OCR1B = counter;
+
 }
 
 /*
