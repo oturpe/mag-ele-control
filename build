@@ -1,4 +1,4 @@
-projectName=pig-puppet-human
+projectName=mag-ele-control
 sourceDir=src
 targetDir=target
 mcu=attiny45
