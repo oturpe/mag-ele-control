@@ -6,11 +6,10 @@
 
 // Half length of indicator led on-off sequence. In other words, the time
 // the indicator is lit of darkened. Given in units of LOOP_DELAY.
-#define INDICATOR_HALF_PERIOD 3
+#define INDICATOR_HALF_PERIOD 10
 
-// Pwm duty cycle for running the motor. 0 is 0 %, 255 is 100 %.
-#define HUMAN_MOTOR_DUTY_CYCLE 200
+// How ofter magnet values are changed. Given in units of LOOP_DELAY.
+#define MAGNET_RUN_INTERVAL 5
 
-#define BASEWAIT_MS 1500
 //Enables debug messaging
 //#define DEBUG

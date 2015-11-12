@@ -16,6 +16,8 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
+#include "MagnetDriver.h"
+
 #ifdef DEBUG
 #include "Debug.h"
 #endif
@@ -25,24 +27,11 @@
 /// \param lit
 ///    If led is turned on. Otherwise it is turned off.
 inline void setIndicator(bool lit) {
-  static uint8_t counter = 1;
-  if (lit) {
-    PORTB |= BV(PORTB2);
-  } else {
-    PORTB = ~BV(PORTB2);
-  }
-  // TEMP: Just testing out the magnet drivers
-  counter += 16;
-  /*if(counter==1) {
-    OCR0A = 0;
-    OCR0B = 0;
-    _delay_ms(BASEWAIT_MS);
-  }*/
-
-  OCR0A = counter;
-  OCR0B = 0xff - counter;
-  OCR1B = counter;
-
+    if (lit) {
+        PORTB |= BV(PORTB2);
+    } else {
+        PORTB = ~BV(PORTB2);
+    }
 }
 
 /*
@@ -91,24 +80,57 @@ int main() {
     #endif
 
     // Set indicator output pin: PB2
-        DDRB |= BV(DDB2);
+    DDRB |= BV(DDB2);
 
     // Set magnet output pins: PB0, PB1, PB4
     DDRB |= BV(DDB0) | BV(DDB1) | BV(DDB4);
 
     // Initialize non-inverted pwm in pins OC0A (PB0) and OC0B (PB1) of timer 0
+    Attiny45::setTimer0Prescaler(Attiny45::PSV_256);
     TCCR0A |= BV(WGM01) | BV(WGM00);
-    TCCR0A |= BV(COM0A1) | BV(COM0A0);
-    TCCR0A |= BV(COM0B1) | BV(COM0B0);
-    Attiny45::setTimer0Prescaler(Attiny45::PSV_64);
-    // Initialize non-invertedpwm in pin  OC1B (PB4) of timer 1
+    TCCR0A |= BV(COM0A1);
+    TCCR0A |= BV(COM0B1);
+
+    // Initialize non-inverted pwm in pin  OC1B (PB4) of timer 1
+    Attiny45::setTimer1Prescaler(Attiny45::PSV_256);
     GTCCR |= BV(PWM1B);
     GTCCR |= BV(COM1B1);
     OCR1C = 0xff;
-    Attiny45::setTimer1Prescaler(Attiny45::PSV_64);
+
+    MagnetDriver driver;
 
     bool indicatorLit = false;
     uint16_t counter = 0;
+    bool morePower = true;
+    uint8_t firstValue = 0;
+    #define VALUES 25
+    uint8_t valueList[VALUES][3] = {
+                            {255,0,0},
+                            {224,32,0},
+                            {192,64,0},
+                            {160,96,0},
+                            {128,128,0},
+                            {96,160,0},
+                            {64,192,0},
+                            {32,224,0},
+                            {0,255,0},
+                            {0,224,32},
+                            {0,192,64},
+                            {0,160,96},
+                            {0,128,128},
+                            {0,96,160},
+                            {0,64,192},
+                            {0,32,224},
+                            {0,0,255},
+                            {32,0,224},
+                            {64,0,192},
+                            {96,0,160},
+                            {128,0,128},
+                            {160,0,96},
+                            {192,0,64},
+                            {224,0,32}};
+    uint8_t valueIndex = 0;
+
     while(true) {
         counter += 1;
         _delay_ms(LOOP_DELAY);
@@ -116,6 +138,27 @@ int main() {
         if(counter % INDICATOR_HALF_PERIOD == 0) {
             indicatorLit = !indicatorLit;
             setIndicator(indicatorLit);
+        }
+
+        if(counter % MAGNET_RUN_INTERVAL == 0) {
+            valueIndex = (valueIndex == VALUES) ? 0 : (valueIndex + 1);
+            driver.set(valueList[valueIndex]);
+
+            /*
+            // Testing: triangle waveform
+            if(morePower) {
+                firstValue += 8;
+            } else {
+                firstValue -= 8;
+            }
+
+            values[1] = firstValue;
+            values[2] = 0xff - firstValue;
+
+            if (firstValue == 248 || firstValue == 0) {
+                morePower = !morePower;
+            }
+            */
         }
     }
 }
