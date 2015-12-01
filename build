@@ -1,7 +1,7 @@
 projectName=mag-ele-control
 sourceDir=src
 targetDir=target
-mcu=attiny45
+mcu=atmega328p
 programmer=arduinoisp
 
 if [ ! -e ${targetDir} ]; then

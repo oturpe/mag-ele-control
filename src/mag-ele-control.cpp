@@ -9,7 +9,7 @@
 // Author: Otto Urpelainen
 // Email: oturpe@iki.fi
 
-#include "Attiny45Utils.h"
+#include "Atmega328pUtils.h"
 
 #include "config.h"
 
@@ -28,49 +28,11 @@
 ///    If led is turned on. Otherwise it is turned off.
 inline void setIndicator(bool lit) {
     if (lit) {
-        PORTB |= BV(PORTB2);
+        PORTB |= BV(PORTB4);
     } else {
-        PORTB = ~BV(PORTB2);
+        PORTB &= ~BV(PORTB4);
     }
 }
-
-/*
-// How many more sensors until presence of pig is detected
-uint8_t pigDetectionDelay = LDR_DELAY;
-
-/// \brief
-///    Tracks if light dependent resistors have had different exposure LDR_DELAY
-///    times consecutively. This is interpreted to mean that pig has appeared in
-///    front of human.
-///
-/// \return
-///    If pig is detected
-inline bool pollSensors() {
-    if((PINB & BV(PINB3)) ^ (PINB & BV(PINB4))) {
-        if(pigDetectionDelay > 0) {
-            pigDetectionDelay--;
-        }
-    } else {
-        pigDetectionDelay = LDR_DELAY;
-    }
-
-    return pigDetectionDelay == 0;
-}
-
-uint16_t humanInactivityDelay = 0;
-
-inline void runHuman() {
-    if(humanInactivityDelay > 0) {
-        humanInactivityDelay--;
-        PORTB |= BV(PORTB1) | BV(PORTB2);
-        OCR0B = 0xff - HUMAN_MOTOR_DUTY_CYCLE;
-        return;
-    }
-
-    PORTB &= ~BV(PORTB1) & ~BV(PORTB2);
-    OCR0B = 0xff;
-}
-*/
 
 int main() {
     #ifdef DEBUG
@@ -79,23 +41,25 @@ int main() {
         */
     #endif
 
-    // Set indicator output pin: PB2
-    DDRB |= BV(DDB2);
+    // Set indicator output pin: PB4
+    DDRB |= BV(DDB4);
 
+    /* TODO: Fix to work with Atmege328p
     // Set magnet output pins: PB0, PB1, PB4
     DDRB |= BV(DDB0) | BV(DDB1) | BV(DDB4);
 
     // Initialize non-inverted pwm in pins OC0A (PB0) and OC0B (PB1) of timer 0
-    Attiny45::setTimer0Prescaler(Attiny45::PSV_256);
+    Atmega328p::setTimer0Prescaler(Atmega328p::PSV_256);
     TCCR0A |= BV(WGM01) | BV(WGM00);
     TCCR0A |= BV(COM0A1);
     TCCR0A |= BV(COM0B1);
 
     // Initialize non-inverted pwm in pin  OC1B (PB4) of timer 1
-    Attiny45::setTimer1Prescaler(Attiny45::PSV_256);
+    Atmega328p::setTimer1Prescaler(Atmega328p::PSV_256);
     GTCCR |= BV(PWM1B);
     GTCCR |= BV(COM1B1);
     OCR1C = 0xff;
+    */
 
     MagnetDriver driver;
 
@@ -140,25 +104,11 @@ int main() {
             setIndicator(indicatorLit);
         }
 
+        /*
         if(counter % MAGNET_RUN_INTERVAL == 0) {
             valueIndex = (valueIndex == VALUES) ? 0 : (valueIndex + 1);
             driver.set(valueList[valueIndex]);
-
-            /*
-            // Testing: triangle waveform
-            if(morePower) {
-                firstValue += 8;
-            } else {
-                firstValue -= 8;
-            }
-
-            values[1] = firstValue;
-            values[2] = 0xff - firstValue;
-
-            if (firstValue == 248 || firstValue == 0) {
-                morePower = !morePower;
-            }
-            */
         }
+        */
     }
 }
