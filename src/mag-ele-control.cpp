@@ -44,22 +44,22 @@ int main() {
     // Set indicator output pin: PB4
     DDRB |= BV(DDB4);
 
-    /* TODO: Fix to work with Atmege328p
-    // Set magnet output pins: PB0, PB1, PB4
-    DDRB |= BV(DDB0) | BV(DDB1) | BV(DDB4);
+    // Initialize non-inverted pwm in pins OC0A (PD5) and OC0B (PD5) of timer 0
+    Atmega328p::initializeTimer0(Atmega328p::PSV_256,
+                                 Atmega328p::PWM_FAST,
+                                 false);
 
-    // Initialize non-inverted pwm in pins OC0A (PB0) and OC0B (PB1) of timer 0
-    Atmega328p::setTimer0Prescaler(Atmega328p::PSV_256);
-    TCCR0A |= BV(WGM01) | BV(WGM00);
-    TCCR0A |= BV(COM0A1);
-    TCCR0A |= BV(COM0B1);
+    DDRD |= BV(DDD6) | BV(DDD5);
+    TCCR0A |= BV(COM0A1) | BV(COM0B1);
 
-    // Initialize non-inverted pwm in pin  OC1B (PB4) of timer 1
-    Atmega328p::setTimer1Prescaler(Atmega328p::PSV_256);
-    GTCCR |= BV(PWM1B);
-    GTCCR |= BV(COM1B1);
-    OCR1C = 0xff;
-    */
+    // Initialize non-inverted pwm in pins OC2A (PB3) and OC2B (PD3) of timer 2
+    Atmega328p::initializeTimer2(Atmega328p::PSV_256,
+                                 Atmega328p::PWM_FAST,
+                                 false);
+
+    DDRB |= BV(DDB3);
+    DDRD |= BV(DDD3);
+    TCCR2A |= BV(COM0A1) | BV(COM0B1);
 
     MagnetDriver driver;
 
@@ -104,11 +104,9 @@ int main() {
             setIndicator(indicatorLit);
         }
 
-        /*
         if(counter % MAGNET_RUN_INTERVAL == 0) {
             valueIndex = (valueIndex == VALUES) ? 0 : (valueIndex + 1);
             driver.set(valueList[valueIndex]);
         }
-        */
     }
 }

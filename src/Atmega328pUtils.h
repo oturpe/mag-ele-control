@@ -16,23 +16,57 @@ enum TimerPrescalerValue {
   PSV_1024,
 };
 
-/// Sets timer 0 prescaler to requested value.
-///
-/// This function assumes that Clock Select bits have not been touched yet. Note
-/// that timer 0 does not support all Timer0PrescalerValue values. If illegal
-/// value is entered, prescaler is not set to any value.
-///
-/// \param value
-///   Requested prescaler value
-void setTimer0Prescaler(TimerPrescalerValue value);
+// Possible waveform generation modes for times.
+enum WaveformGenerationMode {
+  NORMAL,
+  PWM_PHASE_CORRECT,
+  PWM_FAST,
+  CTC
+};
 
-/// Sets timer 2 prescaler to requested value.
+/// Initializes timer 0 by setting waveform generation mode and prescaler.
 ///
-/// This function assumes that Clock Select bits have not been touched yet.
+/// This function assumes that neither Clock Select nor Waveform Generation bits
+/// have not been touched yet. Note that timer 0 does not support all
+/// Timer0PrescalerValue values. If illegal value is entered, prescaler is not
+/// set to any value.
 ///
-/// \param value
-///   Requested prescaler value
-void setTimer2Prescaler(TimerPrescalerValue value);
+/// Parameter topAtOcra toggles using OCRA register values as the TOP for pulse
+/// width modulation. It it only used if mode is either PWM_PHASE_CORRECT or
+/// PWM_FAST.
+///
+/// \param prescalerValue
+///    Requested prescaler value
+///
+/// \param mode
+///    Waveform generation mode
+///
+/// \param topAtOcra
+///    If TOP value should be set to OCRA register value
+void initializeTimer0(TimerPrescalerValue prescalerValue,
+                      WaveformGenerationMode mode,
+                      bool topAtOcra);
+
+/// Initializes timer 2 by setting waveform generation mode and prescaler.
+///
+/// This function assumes that neither Clock Select nor Waveform Generation bits
+/// have not been touched yet.
+///
+/// Parameter topAtOcra toggles using OCRA register values as the TOP for pulse
+/// width modulation. It it only used if mode is either PWM_PHASE_CORRECT or
+/// PWM_FAST.
+///
+/// \param prescalerValue
+///    Requested prescaler value
+///
+/// \param mode
+///    Waveform generation mode
+///
+/// \param topAtOcra
+///    If TOP value should be set to OCRA register value
+void initializeTimer2(TimerPrescalerValue prescalerValue,
+                      WaveformGenerationMode mode,
+                      bool topAtOcra);
 
 // Possible voltage references
 enum VoltageReference {
