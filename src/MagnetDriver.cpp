@@ -12,4 +12,5 @@ void MagnetDriver::set(uint8_t * values) {
     OCR0A = values[0];
     OCR0B = values[1];
     OCR2A = values[2];
+    OCR2B = values[3];
 }

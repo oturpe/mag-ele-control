@@ -21,7 +21,7 @@ public:
     /// \brief
     ///    Sets the magnets to given strengths
     ///
-    /// Values are given as array of values, one for each of the three magnets
+    /// Values are given as array of values, one for each of the four magnets
     ///
     /// \param values
     ///    Values to set
